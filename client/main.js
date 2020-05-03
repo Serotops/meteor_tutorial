@@ -4,10 +4,7 @@ import {Meteor} from 'meteor/meteor';
 import {Tracker} from 'meteor/tracker';
 import {Players} from './../imports/api/players';
 
-
-
-
-/*const players = [{
+/*const players = {
   _id: '1',
   name: 'Lauren',
   score: 102
@@ -17,13 +14,20 @@ import {Players} from './../imports/api/players';
   score: -12
 }];*/
 
-const renderPlayers = function (playersList) {
-  return playersList.map(function (player) {
-    return <p key={player._id}>{player.name} has {player.score} point(s).</p>;
+const renderPlayers = (playersList) => { 
+  return playersList.map((player) => {
+  return (
+      <p key={player._id}>
+        {player.name} has {player.score} point(s).
+        <button onClick={() => Players.update({_id: player._id}, {$inc: {score: 1}})}>+1</button>
+        <button onClick={() => Players.update({_id: player._id}, {$inc: {score: -1}})}>-1</button>
+        <button onClick={() => Players.remove(player._id)}>X</button>
+      </p>
+    );
   });
 };
 
-const handleSumbit  = function (e) {
+const handleSumbit  = (e) => {
   let playerName = e.target.playerName.value; //e: paramètre / target: la valeur voulue avec le form / le "name=""" / value prop pour grab la value
   e.preventDefault(); //Permet de ne pas rafraîchir la page
 
@@ -36,9 +40,9 @@ const handleSumbit  = function (e) {
   }
 } 
 
-Meteor.startup(function () {
-    
-  Tracker.autorun(function() {
+Meteor.startup(() => {
+
+  Tracker.autorun(() => {
     let players = Players.find().fetch();
     let title = 'Score Keep';
     let name = 'Mike';
@@ -46,7 +50,7 @@ Meteor.startup(function () {
       <div>
         <h1>{title}</h1>
         <p>Hello {name}!</p>
-        <p>This is my second p.</p>
+        <p>This is my second p.</p> 
         {renderPlayers(players)}
         <form onSubmit={handleSumbit}>
           <input type="text" name="playerName" placeholder="Player name"/>
@@ -58,4 +62,3 @@ Meteor.startup(function () {
   ReactDOM.render(jsx, document.getElementById('app'));
   }); 
 });
-
